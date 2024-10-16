@@ -1,104 +1,77 @@
 #include <iostream>
+#include <cstring>
 using namespace std;
 
-bool Check(string maze[4][4], int srcx, int srcy, string curr, int index, int destination) {
-    if (srcx >= 0 && srcy >= 0 && srcx <= destination && srcy <= destination && index < curr.length()) {
-        char val = maze[srcx][srcy][0]; 
-        return val == curr[index];
-    }
-    return false;
-}
+const int ROWS = 5;
+const int COLS = 5;
 
-bool solve(string maze[4][4], int srcx, int srcy, string curr, int index, int destination) {
-    if (index == curr.length()) {
+// Function to perform backtracking to search the word in the grid
+bool backtrack(char board[ROWS][COLS], string word, int row, int col, int index) {
+    // If all characters of the word have been matched
+    if (index == word.length()) {
         return true;
     }
 
-    if (!Check(maze, srcx, srcy, curr, index, destination)) {
+    // If out of bounds or the character doesn't match
+    if (row < 0 || row >= ROWS || col < 0 || col >= COLS || board[row][col] != word[index]) {
         return false;
     }
 
-    index++;
+    // Mark the current cell as visited by temporarily changing the character
+    char temp = board[row][col];
+    board[row][col] = '#'; // Use a special marker to denote the cell as visited
 
-    if (solve(maze, srcx + 1, srcy, curr, index, destination)) return true;
-    if (solve(maze, srcx, srcy + 1, curr, index, destination)) return true;
-    if (solve(maze, srcx - 1, srcy, curr, index, destination)) return true;
-    if (solve(maze, srcx, srcy - 1, curr, index, destination)) return true;
+    // Explore in all 8 possible directions
+    if (backtrack(board, word, row - 1, col, index + 1)) return true;  // Up
+    if (backtrack(board, word, row + 1, col, index + 1)) return true;  // Down
+    if (backtrack(board, word, row, col - 1, index + 1)) return true;  // Left
+    if (backtrack(board, word, row, col + 1, index + 1)) return true;  // Right
+    if (backtrack(board, word, row - 1, col - 1, index + 1)) return true;  // Up-Left Diagonal
+    if (backtrack(board, word, row - 1, col + 1, index + 1)) return true;  // Up-Right Diagonal
+    if (backtrack(board, word, row + 1, col - 1, index + 1)) return true;  // Down-Left Diagonal
+    if (backtrack(board, word, row + 1, col + 1, index + 1)) return true;  // Down-Right Diagonal
+
+    // Backtrack: undo the marking of the cell
+    board[row][col] = temp;
     return false;
 }
 
-bool CheckDiagonal(string maze[4][4],int r, int c, string curr){
-    int index = 0;
-    bool f = false;
-
-    for(int i=r; i<4; i++){
-        for(int j=c; j<4; j++)
-        if( i==j){
-           char val = maze[i][j][0];
-           if(val != curr[index]){
-             f = true;
-             return false;
-           }
-           index++;
-        }
-    }
-    if( !f )
-    return true;
-     
-     f = false;
-     index = 0;
-    
-    for(int i=r; i<4; i++){
-        for(int j=c; j<4; j++)
-        if( i==j+1){
-           char val = maze[i][j][0];
-           if(val != curr[index]){
-            f = true;
-             return false;
-           }
-           index++;
-        }
-    }  
-    if( !f )
-    return true;  
-    
-}
-
-void findStringInMaze(string maze[4][4], string curr, int destination) {
-    bool found = false;
-    
-    for (int i = 0; i <= destination; i++) {
-        for (int j = 0; j <= destination; j++) {
-            if (solve(maze, i, j, curr, 0, destination)) {
-                cout << "Found: " << curr << " starting at (" << i << ", " << j << ")" << endl;
-                found = true;
-                return;
-            }
-            if (CheckDiagonal(maze,i,j,curr)) {
-                cout << "Found: " << curr << " starting at (" << i << ", " << j << ")" << endl;
-                found = true;
-                return;
+// Main function to search how many times the word appears in the board
+int exist(char board[ROWS][COLS], string word) {
+    int count = 0;
+    // Start searching from every cell in the grid
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            // For each cell, if a valid match is found, increment the counter
+            if (backtrack(board, word, i, j, 0)) {
+                count++;
             }
         }
     }
-
-    if (!found) {
-        cout << "Not Found: " << curr << endl;
-    }
+    return count;
 }
 
 int main() {
-    string maze[4][4] = {
-        {"A", "B", "C", "D"},
-        {"K", "Y", "F", "E"},
-        {"L", "O", "T", "O"},
-        {"M", "N", "E", "G"}
+    // Example word search grid
+    char board[ROWS][COLS] = {
+        {'G', 'R', 'O', 'O', 'T'},
+        {'B', 'A', 'R', 'R', 'O'},
+        {'W', 'R', 'D', 'B', 'S'},
+        {'R', 'A', 'D', 'A', 'R'},
+        {'W', 'E', 'S', 'T', 'G'}
     };
-    
-    string curr = "YTG";
-    int destination = 3;
 
-    findStringInMaze(maze, curr, destination);
+    string word;
+    cout << "Enter the word to search: ";
+    cin >> word;
+
+    // Check how many times the word exists in the board
+    int occurrences = exist(board, word);
+    if (occurrences > 0) {
+        cout << "The word '" << word << "' was found " << occurrences << " times in the grid!" << endl;
+    } else {
+        cout << "The word '" << word << "' was not found in the grid." << endl;
+    }
 
     return 0;
 }
