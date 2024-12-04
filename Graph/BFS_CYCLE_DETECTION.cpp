@@ -39,39 +39,6 @@ public:
         }
     }
 
-    void bfs(int start)
-    {
-        cout << endl
-             << "BFS TRAVERSAL : " << endl;
-        bool *visited = new bool[vertex];
-        for (int i = 0; i < vertex; i++)
-        {
-            visited[i] = false;
-        }
-
-        int *queue = new int[vertex];
-        int front = 0, rear = 0;
-
-        visited[start] = true;
-        queue[rear++] = start;
-
-        while (front < rear)
-        {
-            int node = queue[front++];
-            cout << node << " ";
-            for (int i = 0; i < vertex; i++)
-            {
-                if (arr[node][i] == 1 && !visited[i])
-                {
-                    visited[i] = true;
-                    queue[rear++] = i;
-                }
-            }
-        }
-
-        delete[] visited;
-        delete[] queue;
-    }
     void bfsCycleDetection(int start)
     {
         cout << endl
@@ -113,7 +80,7 @@ public:
                         parent[i] = node; // Mark current node as parent
                         queue[rear++] = i;
                     }
-                    else if (parent[node] != i)
+                    else if (parent[node] != i && visited[i])
                     {
                         // If visited and not the parent, a cycle is detected
                         cycleDetected = true;
@@ -138,57 +105,7 @@ public:
         }
     }
 
-    void find(int &start, bool *visited, int &index, int *ans)
-    {
-        visited[start] = true;
-        ans[index++] = start;
-
-        for (int i = 0; i < vertex; i++)
-        {
-            if (!visited[i] && arr[start][i] == 1)
-            {
-                find(i, visited, index, ans);
-            }
-        }
-    }
-    void dfs()
-    {
-        cout << endl
-             << "DFS TRAVERSAL :" << endl;
-        bool *visited = new bool[vertex];
-        for (int i = 0; i < vertex; i++)
-        {
-            visited[i] = false;
-        }
-        int *ans = new int[vertex];
-        int index = 0;
-        for (int i = 0; i < vertex; i++)
-        {
-            if (!visited[i])
-            {
-                find(i, visited, index, ans);
-            }
-        }
-        for (int i = 0; i < vertex; i++)
-        {
-            cout << ans[i] << " ";
-        }
-        delete[] visited;
-        delete[] ans;
-    }
-
-    void print()
-    {
-
-        for (int i = 0; i < vertex; i++)
-        {
-            for (int j = 0; j < vertex; j++)
-            {
-                cout << arr[i][j] << " ";
-            }
-            cout << endl;
-        }
-    }
+    
 
     ~graph()
     {
@@ -202,17 +119,12 @@ public:
 
 int main()
 {
-    graph g(7);
+    graph g(5);
     g.addEdge(0, 1, 0);
     g.addEdge(0, 2, 0);
     g.addEdge(1, 3, 0);
-    g.addEdge(1, 4, 0);
-    g.addEdge(2, 5, 0);
-    g.addEdge(2, 6, 0);
-
-    g.print();
-    g.bfs(0);
-    g.dfs();
+    g.addEdge(3, 2, 0);
+   
     g.bfsCycleDetection(0);
 
     return 0;
