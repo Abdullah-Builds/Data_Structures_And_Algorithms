@@ -42,6 +42,7 @@ public:
             else if (i != parent && adj[node][i] == 1)
             {
                 cycleDetected = true;  
+                return;
                 // If we find a visited node that's not the parent, cycle detected
             }
         }
