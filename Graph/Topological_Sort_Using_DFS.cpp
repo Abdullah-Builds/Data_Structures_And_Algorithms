@@ -53,7 +53,7 @@ public:
         }
         while (!s.empty())
         {
-            court << s.top() << " ";
+            cout << s.top() << " ";
             s.pop();
         }
        
