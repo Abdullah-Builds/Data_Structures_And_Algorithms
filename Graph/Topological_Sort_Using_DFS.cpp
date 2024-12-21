@@ -53,14 +53,10 @@ public:
         }
         while (!s.empty())
         {
-            ans.push_back(s.top());
+            court << s.top() << " ";
             s.pop();
         }
-         reverse(ans.begin(),ans.end());
-        for (int i = 0; i < ans.size(); i++)
-        {
-            cout << ans[i] << " ";
-        }
+       
     }
     void PrintGraph()
     {
@@ -78,11 +74,11 @@ public:
 };
 int main()
 {
-    graph g(3);
-    int Node = 3;
+    graph g(4);
+    int Node = 4;
     int Edge = 3;
     int u, v;
-    for (int i = 0; i < Node; i++)
+    for (int i = 0; i < Edge; i++)
     {
         cout << "Enter Edge and vertex" << endl;
 
